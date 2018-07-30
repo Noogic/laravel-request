@@ -1,0 +1,25 @@
+{
+    "name": "noogic/laravel-request",
+    "description": "Application Request to easily handle laravel requests",
+    "authors": [
+        {
+            "name": "Noogic",
+            "email": "noogic@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Noogic\\LaravelRequest\\": "src"
+        }
+    },
+    "require": {
+        "php": "^7.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Noogic\\LaravelRequest\\RequestServiceProvider"
+            ]
+        }
+    }
+}
