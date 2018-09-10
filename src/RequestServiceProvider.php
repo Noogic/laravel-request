@@ -26,5 +26,9 @@ class RequestServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/request.php', 'request');
+
+        $this->app->singleton(ApplicationRequestPluginContainer::class, function ($app) {
+            new ApplicationRequestPluginContainer();
+        });
     }
 }

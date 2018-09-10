@@ -16,15 +16,20 @@ abstract class ApplicationRequest
     /** @var Request */
     protected $request;
 
-    /** @var User|null */
     protected $user;
     protected $associate_to_user = false;
 
     protected $related = null;
+    /**
+     * @var ApplicationRequestPluginContainer
+     */
+    private $plugins;
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, ApplicationRequestPluginContainer $plugins)
     {
         $this->request = $request;
+        $this->plugins = $plugins;
+
         $this->data();
     }
 
@@ -39,6 +44,7 @@ abstract class ApplicationRequest
 
         $this->handleAssociatedUser();
         $this->handleRelatedModel();
+        $this->handlePlugins();
 
         $this->postLoadData();
 
@@ -106,6 +112,14 @@ abstract class ApplicationRequest
             $id = is_a($model, Model::class) ? $model->id : $model;
 
             $this->data[$this->related . '_id'] = $id;
+        }
+    }
+
+    protected function handlePlugins()
+    {
+        /** @var ApplicationRequestPlugin $plugin */
+        foreach ($this->plugins as $plugin) {
+            $plugin->run($this->data, $this->user(), $this->request);
         }
     }
 }
