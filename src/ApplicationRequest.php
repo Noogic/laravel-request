@@ -20,10 +20,10 @@ abstract class ApplicationRequest
     protected $associate_to_user = false;
 
     protected $related = null;
-    /**
-     * @var ApplicationRequestPluginContainer
-     */
-    private $plugins;
+
+    /** @var ApplicationRequestPluginContainer */
+    protected $plugins;
+    protected $use = [];
 
     public function __construct(Request $request, ApplicationRequestPluginContainer $plugins)
     {
@@ -117,9 +117,10 @@ abstract class ApplicationRequest
 
     protected function handlePlugins()
     {
-        /** @var ApplicationRequestPlugin $plugin */
-        foreach ($this->plugins as $plugin) {
-            $plugin->run($this->data, $this->user(), $this->request);
+        foreach ($this->use as $key) {
+            $plugin = $this->plugins->get($key);
+            $data = $plugin::boot()->run($this->data, $this->user(), $this->request);
+            $this->data = array_merge($this->data, $data);
         }
     }
 }
