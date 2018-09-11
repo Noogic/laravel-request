@@ -6,10 +6,17 @@ use Illuminate\Http\Request;
 
 abstract class ApplicationRequestPlugin
 {
-    public function __construct(ApplicationRequestPluginContainer $plugins)
+    protected static $key = null;
+
+    public static function key()
     {
-        $plugins->register($this);
+        return static::$key;
     }
 
-    abstract function run(array $data, $user, Request $request);
+    public static function boot()
+    {
+        return new static();
+    }
+
+    abstract public function run(array $data, $user, Request $request);
 }
