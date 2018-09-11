@@ -3,6 +3,7 @@
 namespace Noogic\LaravelRequest;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 
 class RequestServiceProvider extends ServiceProvider
@@ -18,8 +19,14 @@ class RequestServiceProvider extends ServiceProvider
             __DIR__ . '/../config/request.php' => config_path('request.php')
         ]);
 
+        $pluginsPath = config('request.plugins_folder');
+
+        if (! File::exists($pluginsPath)) {
+            File::makeDirectory($pluginsPath, 0755, true);
+        }
+
         $fileSystem = new Filesystem();
-        $plugins = $fileSystem->allFiles(config('request.plugins_folder'));
+        $plugins = $fileSystem->allFiles($pluginsPath);
 
         /** @var ApplicationRequestPluginContainer $pluginContainer */
         $pluginContainer = $this->app->get(ApplicationRequestPluginContainer::class);
